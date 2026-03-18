@@ -31,21 +31,30 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ error: 'Internal server error' });
 });
 
-async function main() {
-  await connectDb();
+// Vercel Serverless Export
+export default app;
 
-  app.listen(config.port, () => {
-    console.log(`🚀 Backend running on http://localhost:${config.port}`);
+// Local Development Server
+if (process.env.NODE_ENV !== 'production') {
+  async function main() {
+    await connectDb();
+
+    app.listen(config.port, () => {
+      console.log(`🚀 Backend running on http://localhost:${config.port}`);
+    });
+  }
+
+  main().catch((err) => {
+    console.error('[startup] failed', err);
+    process.exit(1);
   });
+
+  process.on('SIGINT', async () => {
+    console.log('[shutdown] disconnecting database...');
+    await disconnectDb();
+    process.exit(0);
+  });
+} else {
+  // In Serverless production, lazily connect to the DB
+  connectDb().catch(console.error);
 }
-
-main().catch((err) => {
-  console.error('[startup] failed', err);
-  process.exit(1);
-});
-
-process.on('SIGINT', async () => {
-  console.log('[shutdown] disconnecting database...');
-  await disconnectDb();
-  process.exit(0);
-});
