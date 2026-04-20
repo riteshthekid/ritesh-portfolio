@@ -20,6 +20,16 @@ app.use(helmet());
 app.use(morgan('tiny'));
 
 app.get('/api/health', (_req, res) => {
+  const missing = [];
+  if (!config.databaseUrl) missing.push('DATABASE_URL');
+  if (!config.jwtSecret) missing.push('JWT_SECRET');
+  if (!config.adminUsername) missing.push('ADMIN_USERNAME');
+  if (!config.adminPassword) missing.push('ADMIN_PASSWORD');
+  
+  if (missing.length > 0) {
+    return res.status(500).json({ status: 'config_error', missingEnvVars: missing });
+  }
+
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 

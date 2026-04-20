@@ -1,20 +1,28 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Portfolio Frontend
 
-# Run and deploy your AI Studio app
+React 19 + Vite + TypeScript frontend for Ritesh Patel's portfolio.
 
-This contains everything you need to run your app locally.
+## Development
 
-View your app in AI Studio: https://ai.studio/apps/02d0365e-4891-499b-8951-8787ed1a2715
+```bash
+npm install
+npm run dev
+```
 
-## Run Locally
+Opens at `http://localhost:3000`. API requests are proxied to `http://localhost:4000` in dev.
 
-**Prerequisites:**  Node.js
+## Build
 
+```bash
+npm run build
+npm run preview
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Stack
+
+- **React 19** with TypeScript
+- **Vite** for bundling
+- **Tailwind CSS v4** for styling
+- **Motion** (Framer Motion) for animations
+- **React Router v7** for routing
+- **Lucide React** for icons

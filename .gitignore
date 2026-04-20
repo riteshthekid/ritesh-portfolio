@@ -118,10 +118,6 @@ desktop.ini
 /backend/prisma/*.db
 /backend/prisma/*.db-journal
 
-# Docker
-docker-compose.override.yml
-*.dockerignore
-
 # IDEs and Editors
 .idea/
 .vscode/

@@ -11,10 +11,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading time for the skeleton loader
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000); // 1.5 seconds
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
