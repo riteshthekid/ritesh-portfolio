@@ -127,3 +127,6 @@ desktop.ini
 # Project specific
 frontend/dist/
 backend/dist/
+
+# Legacy directory (migrated to root)
+nextjs-app/
