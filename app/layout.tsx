@@ -40,11 +40,9 @@ export const metadata: Metadata = {
   },
 
   // ─── Google Search Console Verification ──────────────────────────────────
-  // STEP: Replace the value below with your actual verification code from
-  // Google Search Console → Add Property → HTML tag → content="..."
-  // verification: {
-  //   google: 'PASTE_YOUR_GOOGLE_VERIFICATION_CODE_HERE',
-  // },
+  verification: {
+    google: 'AUiJbP1XfZ81UfX_tFf5n0L_v9x5n6qf6k0W_p7k_4',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
