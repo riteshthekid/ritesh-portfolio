@@ -3,15 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogOut, Trash2, Mail, Calendar, RefreshCw } from 'lucide-react';
-
-interface ContactMessage {
-  id: string;
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  createdAt: string;
-}
+import type { ContactMessage } from '@/types';
 
 export default function AdminDashboard() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
@@ -46,7 +38,7 @@ export default function AdminDashboard() {
       }
 
       const data = await response.json();
-      setMessages(data.messages || []);
+      setMessages(data.messages ?? []);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Unknown error';
       setError(message);
@@ -73,13 +65,13 @@ export default function AdminDashboard() {
     try {
       const response = await fetch(`/api/admin/messages/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token ?? ''}` },
       });
 
       if (!response.ok) throw new Error('Failed to delete');
       setMessages((prev) => prev.filter((msg) => msg.id !== id));
     } catch {
-      alert('Error deleting message');
+      alert('Error deleting message. Please try again.');
     } finally {
       setDeletingId(null);
     }
@@ -123,7 +115,7 @@ export default function AdminDashboard() {
           </div>
 
           <button
-            onClick={fetchMessages}
+            onClick={() => void fetchMessages()}
             disabled={loading}
             className="flex items-center gap-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white px-4 py-2 rounded-xl transition-all disabled:opacity-50"
           >
@@ -188,7 +180,7 @@ export default function AdminDashboard() {
 
                     <div className="flex justify-end mt-6 pt-4 border-t border-white/5">
                       <button
-                        onClick={() => handleDelete(msg.id)}
+                        onClick={() => void handleDelete(msg.id)}
                         disabled={deletingId === msg.id}
                         className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-400/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
                       >

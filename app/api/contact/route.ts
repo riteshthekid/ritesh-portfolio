@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { contactMessageSchema } from '@/lib/validation';
+import { ZodError } from 'zod';
 
 // Simple in-memory rate limiter (per IP, 5 requests per 15 minutes)
+// NOTE: In a serverless environment, this resets on cold starts. For production,
+// use Redis-based rate limiting (e.g., Upstash) for persistent limits.
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const MAX_REQUESTS = 5;
@@ -34,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     if (!checkRateLimit(ip)) {
       return NextResponse.json(
-        { error: 'Too many contact requests from this IP, please try again later.' },
+        { error: 'Too many requests. Please try again in 15 minutes.' },
         { status: 429 }
       );
     }
@@ -49,16 +52,19 @@ export async function POST(request: NextRequest) {
         subject: validatedData.subject,
         message: validatedData.message,
         ip,
-        userAgent: request.headers.get('user-agent') || undefined,
+        userAgent: request.headers.get('user-agent') ?? undefined,
       },
     });
 
     return NextResponse.json({ ok: true, id: newMessage.id }, { status: 201 });
   } catch (error) {
-    if (error instanceof Error && error.name === 'ZodError') {
-      return NextResponse.json({ error: 'Invalid input data', details: error.message }, { status: 400 });
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        { error: 'Invalid input data', details: error.errors[0]?.message },
+        { status: 400 }
+      );
     }
-    console.error('[contact] error creating message', error);
+    console.error('[contact] error creating message:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

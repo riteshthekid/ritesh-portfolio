@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { login } from '@/lib/auth';
 import { loginSchema } from '@/lib/validation';
+import { ZodError } from 'zod';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,9 +16,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ token });
   } catch (error) {
-    if (error instanceof Error && error.name === 'ZodError') {
+    if (error instanceof ZodError) {
       return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
     }
+    console.error('[admin/login] error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
